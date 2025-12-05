@@ -717,5 +717,13 @@
     "messages": 4,
     "seen": 5.8,
     "rssi": -33.5
+  },
+  "48b204": {
+    "hex": "48b204",
+    "mlat": [],
+    "tisb": [],
+    "messages": 4,
+    "seen": 0.7,
+    "rssi": -34.2
   }
 }
