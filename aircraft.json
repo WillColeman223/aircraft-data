@@ -1608,5 +1608,14 @@
     "messages": 6,
     "seen": 0.2,
     "rssi": -30.4
+  },
+  "4010da": {
+    "hex": "4010da",
+    "altitude": 14000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 8,
+    "seen": 1.8,
+    "rssi": -29.0
   }
 }
