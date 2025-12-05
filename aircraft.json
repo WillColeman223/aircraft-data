@@ -825,5 +825,19 @@
     "messages": 3,
     "seen": 1.6,
     "rssi": -49.5
+  },
+  "4ac9e1": {
+    "hex": "4ac9e1",
+    "squawk": "6220",
+    "flight": "SAS804  ",
+    "altitude": 12900,
+    "vert_rate": 2624,
+    "track": 79,
+    "speed": 374,
+    "mlat": [],
+    "tisb": [],
+    "messages": 27,
+    "seen": 0.0,
+    "rssi": -28.6
   }
 }
