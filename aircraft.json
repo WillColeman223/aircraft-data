@@ -1964,5 +1964,14 @@
     "messages": 2,
     "seen": 4.9,
     "rssi": -35.9
+  },
+  "aa44cf": {
+    "hex": "aa44cf",
+    "altitude": 32000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 4,
+    "seen": 6.0,
+    "rssi": -33.2
   }
 }
