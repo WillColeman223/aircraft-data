@@ -1942,5 +1942,14 @@
     "messages": 12,
     "seen": 0.2,
     "rssi": -30.0
+  },
+  "403438": {
+    "hex": "403438",
+    "altitude": 2400,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 0.5,
+    "rssi": -35.6
   }
 }
