@@ -1871,5 +1871,41 @@
     "messages": 2,
     "seen": 1.1,
     "rssi": -37.3
+  },
+  "4b1916": {
+    "hex": "4b1916",
+    "altitude": 32000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 3,
+    "seen": 0.6,
+    "rssi": -35.2
+  },
+  "4ca8d8": {
+    "hex": "4ca8d8",
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 0.3,
+    "rssi": -38.3
+  },
+  "407844": {
+    "hex": "407844",
+    "squawk": "1441",
+    "flight": "BAW780F ",
+    "lat": 51.635651,
+    "lon": -0.549316,
+    "nucp": 7,
+    "seen_pos": 1.7,
+    "altitude": 10975,
+    "vert_rate": 1344,
+    "track": 47,
+    "speed": 339,
+    "category": "A3",
+    "mlat": [],
+    "tisb": [],
+    "messages": 29,
+    "seen": 0.6,
+    "rssi": -29.4
   }
 }
