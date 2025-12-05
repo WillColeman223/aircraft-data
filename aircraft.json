@@ -801,5 +801,29 @@
     "messages": 2,
     "seen": 3.2,
     "rssi": -38.2
+  },
+  "~4d1072": {
+    "hex": "~4d1072",
+    "type": "tisb_other",
+    "lat": 52.022777,
+    "lon": 0.781599,
+    "nucp": 0,
+    "seen_pos": 1.6,
+    "altitude": 45000,
+    "vert_rate": 0,
+    "track": 229,
+    "speed": 407,
+    "mlat": [
+      "lat",
+      "lon",
+      "altitude",
+      "track",
+      "speed",
+      "vert_rate"
+    ],
+    "tisb": [],
+    "messages": 3,
+    "seen": 1.6,
+    "rssi": -49.5
   }
 }
