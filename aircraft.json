@@ -699,5 +699,14 @@
     "messages": 13,
     "seen": 2.8,
     "rssi": -31.2
+  },
+  "706059": {
+    "hex": "706059",
+    "altitude": 4150,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 2.7,
+    "rssi": -37.2
   }
 }
