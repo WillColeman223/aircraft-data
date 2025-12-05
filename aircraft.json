@@ -1472,5 +1472,14 @@
     "messages": 111,
     "seen": 0.1,
     "rssi": -27.8
+  },
+  "a06f22": {
+    "hex": "a06f22",
+    "altitude": 19475,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 0.7,
+    "rssi": -38.0
   }
 }
