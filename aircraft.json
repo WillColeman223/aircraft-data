@@ -662,5 +662,42 @@
     "messages": 2,
     "seen": 5.0,
     "rssi": -38.3
+  },
+  "~ec1102": {
+    "hex": "~ec1102",
+    "type": "tisb_other",
+    "lat": 51.175015,
+    "lon": -0.893478,
+    "nucp": 0,
+    "seen_pos": 3.9,
+    "altitude": 6000,
+    "vert_rate": 2560,
+    "track": 206,
+    "speed": 186,
+    "mlat": [
+      "lat",
+      "lon",
+      "altitude",
+      "track",
+      "speed",
+      "vert_rate"
+    ],
+    "tisb": [],
+    "messages": 3,
+    "seen": 3.9,
+    "rssi": -49.5
+  },
+  "a9d286": {
+    "hex": "a9d286",
+    "lat": 50.727585,
+    "lon": -1.664726,
+    "nucp": 7,
+    "seen_pos": 4.6,
+    "altitude": 20250,
+    "mlat": [],
+    "tisb": [],
+    "messages": 13,
+    "seen": 2.8,
+    "rssi": -31.2
   }
 }
