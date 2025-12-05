@@ -1510,5 +1510,14 @@
     "messages": 7,
     "seen": 6.1,
     "rssi": -31.1
+  },
+  "a8bd6a": {
+    "hex": "a8bd6a",
+    "altitude": 14000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 15,
+    "seen": 1.9,
+    "rssi": -31.2
   }
 }
