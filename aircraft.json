@@ -1691,5 +1691,23 @@
     "messages": 26,
     "seen": 1.0,
     "rssi": -28.9
+  },
+  "40823d": {
+    "hex": "40823d",
+    "squawk": "0567",
+    "flight": "EXS1335 ",
+    "lat": 51.635603,
+    "lon": -1.301727,
+    "nucp": 7,
+    "seen_pos": 0.2,
+    "altitude": 24700,
+    "vert_rate": 1920,
+    "track": 183,
+    "speed": 388,
+    "mlat": [],
+    "tisb": [],
+    "messages": 66,
+    "seen": 0.2,
+    "rssi": -28.4
   }
 }
