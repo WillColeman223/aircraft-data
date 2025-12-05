@@ -1927,5 +1927,20 @@
     "messages": 8,
     "seen": 1.9,
     "rssi": -30.8
+  },
+  "407600": {
+    "hex": "407600",
+    "squawk": "5270",
+    "flight": "BAW5HL  ",
+    "altitude": 6350,
+    "vert_rate": 2048,
+    "track": 207,
+    "speed": 233,
+    "category": "A3",
+    "mlat": [],
+    "tisb": [],
+    "messages": 12,
+    "seen": 0.2,
+    "rssi": -30.0
   }
 }
