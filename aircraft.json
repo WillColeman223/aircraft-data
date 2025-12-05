@@ -708,5 +708,14 @@
     "messages": 2,
     "seen": 2.7,
     "rssi": -37.2
+  },
+  "405d11": {
+    "hex": "405d11",
+    "altitude": 15900,
+    "mlat": [],
+    "tisb": [],
+    "messages": 4,
+    "seen": 5.8,
+    "rssi": -33.5
   }
 }
