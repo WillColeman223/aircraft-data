@@ -589,5 +589,13 @@
     "messages": 7,
     "seen": 2.5,
     "rssi": -31.8
+  },
+  "43c5da": {
+    "hex": "43c5da",
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 0.9,
+    "rssi": -37.6
   }
 }
