@@ -1519,5 +1519,27 @@
     "messages": 15,
     "seen": 1.9,
     "rssi": -31.2
+  },
+  "c0584f": {
+    "hex": "c0584f",
+    "squawk": "5727",
+    "altitude": 36000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 12,
+    "seen": 0.7,
+    "rssi": -30.8
+  },
+  "407fea": {
+    "hex": "407fea",
+    "altitude": 13775,
+    "vert_rate": -1728,
+    "track": 58,
+    "speed": 349,
+    "mlat": [],
+    "tisb": [],
+    "messages": 10,
+    "seen": 1.3,
+    "rssi": -28.4
   }
 }
