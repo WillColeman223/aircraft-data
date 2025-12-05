@@ -839,5 +839,21 @@
     "messages": 27,
     "seen": 0.0,
     "rssi": -28.6
+  },
+  "4074e3": {
+    "hex": "4074e3",
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 4.4,
+    "rssi": -38.3
+  },
+  "48436f": {
+    "hex": "48436f",
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 2.8,
+    "rssi": -38.4
   }
 }
