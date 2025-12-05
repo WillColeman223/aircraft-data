@@ -11,16 +11,19 @@
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #333; color: white; }
   tr:nth-child(even) { background: #f9f9f9; }
+  tr.recent { background: #d0ffd0; } /* Highlight recent planes */
 </style>
 </head>
 <body>
 <h1>All Planes Ever Seen</h1>
-<input type="text" id="search" placeholder="Search by flight, hex, etc.">
+<input type="text" id="search" placeholder="Search by flight, hex, callsign, registration...">
 <table id="planes-table">
   <thead>
     <tr>
       <th>Hex</th>
       <th>Flight</th>
+      <th>Call Sign</th>
+      <th>Registration</th>
       <th>Squawk</th>
       <th>Altitude</th>
       <th>Lat</th>
@@ -38,26 +41,32 @@ const AIRNAV_API_KEY = '245528f9314182ab8216ab3ca0f7bda5971e4e04';
 const AIRNAV_URL = `https://api.airnav.com/v1/radar/aircraft?apikey=${AIRNAV_API_KEY}`;
 const GITHUB_URL = 'https://raw.githubusercontent.com/WillColeman223/aircraft-data/main/aircraft.json';
 const LOCAL_STORAGE_KEY = 'allPlanesData';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyjJJ5C13w4mfiQ2RiVJ-1qdiYMUG1BLxlIADlZrgIkSZcllOh2aTKXeOXzh6Tz9vv9/exec';
 
 // --- FUNCTIONS ---
 async function fetchPlanes() {
     try {
+        // Fetch GitHub historical data
         const githubResponse = await fetch(GITHUB_URL);
         const githubData = await githubResponse.json();
-        // Mark GitHub planes as source "GitHub"
         for (const hex in githubData) {
             githubData[hex].source = 'GitHub';
         }
 
+        // Fetch AirNav live data
         const airnavResponse = await fetch(AIRNAV_URL);
         const airnavData = await airnavResponse.json();
-        // Mark AirNav planes as source "AirNav"
         airnavData.forEach(plane => plane.source = 'AirNav');
 
+        // Merge data
         const mergedData = mergeData(githubData, airnavData);
 
+        // Save locally and display
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedData));
         displayPlanes(mergedData);
+
+        // Send to Google Sheets
+        sendToSheet(mergedData);
     } catch (e) {
         console.log('Error fetching data, using local storage.', e);
         const localData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
@@ -70,9 +79,9 @@ function mergeData(historical, live) {
     live.forEach(plane => {
         const hex = plane.hex || plane.icao;
         if (!merged[hex]) {
-            merged[hex] = {...plane, firstSeen: new Date().toISOString()};
+            merged[hex] = {...plane, firstSeen: new Date().toISOString(), lastSeen: new Date().toISOString()};
         } else {
-            merged[hex] = {...merged[hex], ...plane};
+            merged[hex] = {...merged[hex], ...plane, lastSeen: new Date().toISOString()};
         }
     });
     return merged;
@@ -85,11 +94,21 @@ function displayPlanes(data) {
     const planes = Object.values(data)
         .sort((a,b) => new Date(b.lastSeen || b.firstSeen || 0) - new Date(a.lastSeen || a.firstSeen || 0));
 
+    const now = new Date();
     planes.forEach(plane => {
         const row = document.createElement('tr');
+
+        // Highlight planes seen in the last 5 minutes
+        const lastSeen = new Date(plane.lastSeen || plane.firstSeen);
+        if ((now - lastSeen)/60000 <= 5) {
+            row.classList.add('recent');
+        }
+
         row.innerHTML = `
             <td>${plane.hex || plane.icao || ''}</td>
             <td>${plane.flight || ''}</td>
+            <td>${plane.callsign || ''}</td>
+            <td>${plane.registration || ''}</td>
             <td>${plane.squawk || ''}</td>
             <td>${plane.altitude || plane.alt_baro || plane.alt_geom || ''}</td>
             <td>${plane.lat || ''}</td>
@@ -99,6 +118,21 @@ function displayPlanes(data) {
         `;
         tbody.appendChild(row);
     });
+}
+
+// --- Send merged data to Google Sheets ---
+async function sendToSheet(data) {
+    const planesArray = Object.values(data);
+    try {
+        await fetch(SHEET_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(planesArray)
+        });
+        console.log('Data sent to Google Sheets');
+    } catch (err) {
+        console.log('Error sending to Google Sheets', err);
+    }
 }
 
 // --- SEARCH FUNCTION ---
@@ -113,7 +147,7 @@ document.getElementById('search').addEventListener('input', function() {
 
 // --- INITIALIZE ---
 fetchPlanes();
-setInterval(fetchPlanes, 30000);
+setInterval(fetchPlanes, 30000); // refresh every 30s
 </script>
 </body>
 </html>
