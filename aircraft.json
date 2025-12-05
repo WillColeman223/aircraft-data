@@ -1709,5 +1709,24 @@
     "messages": 66,
     "seen": 0.2,
     "rssi": -28.4
+  },
+  "407796": {
+    "hex": "407796",
+    "squawk": "0511",
+    "flight": "EZY18MB ",
+    "lat": 51.452499,
+    "lon": -1.586114,
+    "nucp": 7,
+    "seen_pos": 0.7,
+    "altitude": 22525,
+    "vert_rate": 1344,
+    "track": 99,
+    "speed": 427,
+    "category": "A3",
+    "mlat": [],
+    "tisb": [],
+    "messages": 117,
+    "seen": 0.2,
+    "rssi": -27.8
   }
 }
