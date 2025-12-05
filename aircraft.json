@@ -1760,5 +1760,15 @@
     "messages": 4,
     "seen": 0.8,
     "rssi": -34.6
+  },
+  "490d08": {
+    "hex": "490d08",
+    "squawk": "4661",
+    "altitude": 12425,
+    "mlat": [],
+    "tisb": [],
+    "messages": 18,
+    "seen": 0.3,
+    "rssi": -30.7
   }
 }
