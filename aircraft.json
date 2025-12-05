@@ -1973,5 +1973,18 @@
     "messages": 4,
     "seen": 6.0,
     "rssi": -33.2
+  },
+  "406446": {
+    "hex": "406446",
+    "squawk": "4667",
+    "altitude": 13200,
+    "vert_rate": 2944,
+    "track": 78,
+    "speed": 366,
+    "mlat": [],
+    "tisb": [],
+    "messages": 12,
+    "seen": 0.0,
+    "rssi": -30.7
   }
 }
