@@ -760,5 +760,13 @@
     "messages": 3,
     "seen": 0.2,
     "rssi": -36.5
+  },
+  "45a9a8": {
+    "hex": "45a9a8",
+    "mlat": [],
+    "tisb": [],
+    "messages": 3,
+    "seen": 0.6,
+    "rssi": -37.6
   }
 }
