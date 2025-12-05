@@ -768,5 +768,18 @@
     "messages": 3,
     "seen": 0.6,
     "rssi": -37.6
+  },
+  "4081bd": {
+    "hex": "4081bd",
+    "squawk": "4727",
+    "altitude": 10425,
+    "vert_rate": 1920,
+    "track": 54,
+    "speed": 312,
+    "mlat": [],
+    "tisb": [],
+    "messages": 37,
+    "seen": 0.0,
+    "rssi": -29.7
   }
 }
