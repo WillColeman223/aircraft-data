@@ -623,5 +623,16 @@
     "messages": 10,
     "seen": 0.4,
     "rssi": -30.9
+  },
+  "406a3d": {
+    "hex": "406a3d",
+    "vert_rate": 1088,
+    "track": 137,
+    "speed": 230,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 2.4,
+    "rssi": -37.6
   }
 }
