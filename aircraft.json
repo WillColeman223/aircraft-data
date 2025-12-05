@@ -2004,5 +2004,27 @@
     "messages": 2,
     "seen": 3.7,
     "rssi": -37.4
+  },
+  "c051e4": {
+    "hex": "c051e4",
+    "squawk": "5756",
+    "altitude": 36000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 7,
+    "seen": 0.1,
+    "rssi": -31.4
+  },
+  "407568": {
+    "hex": "407568",
+    "altitude": 7700,
+    "vert_rate": 2560,
+    "track": 245,
+    "speed": 249,
+    "mlat": [],
+    "tisb": [],
+    "messages": 16,
+    "seen": 0.2,
+    "rssi": -28.1
   }
 }
