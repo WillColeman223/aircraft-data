@@ -2,152 +2,102 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ADS-B Plane Tracker</title>
+<title>Live Flights Dashboard</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
-  h1 { text-align: center; margin-top: 20px; }
-  #search { width: 50%; margin: 10px auto; display: block; padding: 8px; font-size: 16px; }
-  table { border-collapse: collapse; width: 95%; margin: 20px auto; background: white; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  th { background: #333; color: white; }
-  tr:nth-child(even) { background: #f9f9f9; }
-  tr.recent { background: #d0ffd0; } /* Highlight recent planes */
+  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 20px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+  .flight-box {
+    background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 180px; text-align: center; padding: 10px; transition: transform 0.2s;
+  }
+  .flight-box:hover { transform: scale(1.05); }
+  .flight-img { width: 100%; height: auto; border-radius: 5px; }
+  .callsign { font-weight: bold; margin: 5px 0; }
+  .reg { color: #555; font-size: 0.9em; margin-bottom: 5px; }
+  .link { display: block; margin-top: 5px; color: #0077cc; text-decoration: none; font-size: 0.85em; }
+  .link:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-<h1>All Planes Ever Seen</h1>
-<input type="text" id="search" placeholder="Search by flight, hex, callsign, registration...">
-<table id="planes-table">
-  <thead>
-    <tr>
-      <th>Hex</th>
-      <th>Flight</th>
-      <th>Call Sign</th>
-      <th>Registration</th>
-      <th>Squawk</th>
-      <th>Altitude</th>
-      <th>Lat</th>
-      <th>Lon</th>
-      <th>Timestamp</th>
-      <th>Source</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+
+<h1>Live Flights Dashboard</h1>
+<div id="flights" class="grid"></div>
 
 <script>
-// --- CONFIG ---
-const AIRNAV_API_KEY = '245528f9314182ab8216ab3ca0f7bda5971e4e04';
-const AIRNAV_URL = `https://api.airnav.com/v1/radar/aircraft?apikey=${AIRNAV_API_KEY}`;
-const GITHUB_URL = 'https://raw.githubusercontent.com/WillColeman223/aircraft-data/main/aircraft.json';
-const LOCAL_STORAGE_KEY = 'allPlanesData';
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyjJJ5C13w4mfiQ2RiVJ-1qdiYMUG1BLxlIADlZrgIkSZcllOh2aTKXeOXzh6Tz9vv9/exec';
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbyP5QTx4pkWYiwW5cSYGpb_JondOQvVlDDFLlgu8yZpt5QzT6-xjw6XiI8Yvd0BdnE/exec";
 
-// --- FUNCTIONS ---
-async function fetchPlanes() {
+// Placeholder image
+function getPlaneImage(registration) {
+    return registration ? `https://via.placeholder.com/150?text=${registration}` : "https://via.placeholder.com/150?text=Plane";
+}
+
+// FlightRadar24 link
+function getFlightRadarLink(callsign) {
+    return callsign ? `https://www.flightradar24.com/data/flights/${callsign}` : "#";
+}
+
+// JetPhotos link
+function getJetPhotosLink(registration) {
+    return registration ? `https://www.jetphotos.com/photo/aircraft?registration=${registration}` : "#";
+}
+
+// Load and display flights
+async function loadFlights() {
     try {
-        // Fetch GitHub historical data
-        const githubResponse = await fetch(GITHUB_URL);
-        const githubData = await githubResponse.json();
-        for (const hex in githubData) {
-            githubData[hex].source = 'GitHub';
-        }
+        const response = await fetch(SHEET_URL);
+        const data = await response.json();
+        const container = document.getElementById("flights");
+        container.innerHTML = "";
 
-        // Fetch AirNav live data
-        const airnavResponse = await fetch(AIRNAV_URL);
-        const airnavData = await airnavResponse.json();
-        airnavData.forEach(plane => plane.source = 'AirNav');
+        data.forEach(flight => {
+            const box = document.createElement("div");
+            box.className = "flight-box";
 
-        // Merge data
-        const mergedData = mergeData(githubData, airnavData);
+            const img = document.createElement("img");
+            img.src = getPlaneImage(flight.registration);
+            img.alt = flight.callsign;
+            img.className = "flight-img";
 
-        // Save locally and display
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedData));
-        displayPlanes(mergedData);
+            const callsign = document.createElement("div");
+            callsign.className = "callsign";
+            callsign.textContent = flight.callsign || "N/A";
 
-        // Send to Google Sheets
-        sendToSheet(mergedData);
-    } catch (e) {
-        console.log('Error fetching data, using local storage.', e);
-        const localData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
-        displayPlanes(localData);
-    }
-}
+            const reg = document.createElement("div");
+            reg.className = "reg";
+            reg.textContent = flight.registration || "Unknown";
 
-function mergeData(historical, live) {
-    const merged = {...historical};
-    live.forEach(plane => {
-        const hex = plane.hex || plane.icao;
-        if (!merged[hex]) {
-            merged[hex] = {...plane, firstSeen: new Date().toISOString(), lastSeen: new Date().toISOString()};
-        } else {
-            merged[hex] = {...merged[hex], ...plane, lastSeen: new Date().toISOString()};
-        }
-    });
-    return merged;
-}
+            const frLink = document.createElement("a");
+            frLink.href = getFlightRadarLink(flight.callsign);
+            frLink.target = "_blank";
+            frLink.className = "link";
+            frLink.textContent = "View on FlightRadar24";
 
-function displayPlanes(data) {
-    const tbody = document.querySelector('#planes-table tbody');
-    tbody.innerHTML = '';
+            const jpLink = document.createElement("a");
+            jpLink.href = getJetPhotosLink(flight.registration);
+            jpLink.target = "_blank";
+            jpLink.className = "link";
+            jpLink.textContent = "View JetPhotos";
 
-    const planes = Object.values(data)
-        .sort((a,b) => new Date(b.lastSeen || b.firstSeen || 0) - new Date(a.lastSeen || a.firstSeen || 0));
+            box.appendChild(img);
+            box.appendChild(callsign);
+            box.appendChild(reg);
+            box.appendChild(frLink);
+            box.appendChild(jpLink);
 
-    const now = new Date();
-    planes.forEach(plane => {
-        const row = document.createElement('tr');
-
-        // Highlight planes seen in the last 5 minutes
-        const lastSeen = new Date(plane.lastSeen || plane.firstSeen);
-        if ((now - lastSeen)/60000 <= 5) {
-            row.classList.add('recent');
-        }
-
-        row.innerHTML = `
-            <td>${plane.hex || plane.icao || ''}</td>
-            <td>${plane.flight || ''}</td>
-            <td>${plane.callsign || ''}</td>
-            <td>${plane.registration || ''}</td>
-            <td>${plane.squawk || ''}</td>
-            <td>${plane.altitude || plane.alt_baro || plane.alt_geom || ''}</td>
-            <td>${plane.lat || ''}</td>
-            <td>${plane.lon || ''}</td>
-            <td>${plane.lastSeen || plane.firstSeen || ''}</td>
-            <td>${plane.source || ''}</td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-// --- Send merged data to Google Sheets ---
-async function sendToSheet(data) {
-    const planesArray = Object.values(data);
-    try {
-        await fetch(SHEET_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(planesArray)
+            container.appendChild(box);
         });
-        console.log('Data sent to Google Sheets');
-    } catch (err) {
-        console.log('Error sending to Google Sheets', err);
+
+    } catch(err) {
+        console.error("Failed to load flights:", err);
     }
 }
 
-// --- SEARCH FUNCTION ---
-document.getElementById('search').addEventListener('input', function() {
-    const filter = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#planes-table tbody tr');
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(filter) ? '' : 'none';
-    });
-});
-
-// --- INITIALIZE ---
-fetchPlanes();
-setInterval(fetchPlanes, 30000); // refresh every 30s
+// Refresh every 60 seconds
+loadFlights();
+setInterval(loadFlights, 60000);
 </script>
+
 </body>
 </html>
+
