@@ -1409,5 +1409,16 @@
     "messages": 31,
     "seen": 0.0,
     "rssi": -29.6
+  },
+  "400db2": {
+    "hex": "400db2",
+    "vert_rate": 3648,
+    "track": 243,
+    "speed": 255,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 0.1,
+    "rssi": -36.7
   }
 }
