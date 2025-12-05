@@ -642,5 +642,17 @@
     "messages": 3,
     "seen": 1.7,
     "rssi": -37.0
+  },
+  "479bac": {
+    "hex": "479bac",
+    "altitude": 5325,
+    "vert_rate": 2752,
+    "track": 205,
+    "speed": 194,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 3.1,
+    "rssi": -36.2
   }
 }
