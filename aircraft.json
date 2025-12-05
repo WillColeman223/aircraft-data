@@ -1739,5 +1739,18 @@
     "messages": 12,
     "seen": 0.0,
     "rssi": -30.0
+  },
+  "4400e3": {
+    "hex": "4400e3",
+    "squawk": "2342",
+    "altitude": 8775,
+    "vert_rate": -1536,
+    "track": 26,
+    "speed": 313,
+    "mlat": [],
+    "tisb": [],
+    "messages": 9,
+    "seen": 1.7,
+    "rssi": -29.5
   }
 }
