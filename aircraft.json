@@ -1796,5 +1796,15 @@
     "messages": 4,
     "seen": 1.5,
     "rssi": -35.0
+  },
+  "47a518": {
+    "hex": "47a518",
+    "squawk": "2360",
+    "altitude": 36000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 15,
+    "seen": 1.1,
+    "rssi": -29.2
   }
 }
