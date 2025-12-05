@@ -1638,5 +1638,14 @@
     "messages": 2,
     "seen": 4.5,
     "rssi": -35.8
+  },
+  "4d2382": {
+    "hex": "4d2382",
+    "altitude": 38000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 8,
+    "seen": 1.8,
+    "rssi": -30.5
   }
 }
