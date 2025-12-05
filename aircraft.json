@@ -634,5 +634,13 @@
     "messages": 2,
     "seen": 2.4,
     "rssi": -37.6
+  },
+  "4ca302": {
+    "hex": "4ca302",
+    "mlat": [],
+    "tisb": [],
+    "messages": 3,
+    "seen": 1.7,
+    "rssi": -37.0
   }
 }
