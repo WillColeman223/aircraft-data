@@ -6,6 +6,7 @@
 <style>
   body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
   h1 { text-align: center; margin-top: 20px; }
+  #search { width: 50%; margin: 10px auto; display: block; padding: 8px; font-size: 16px; }
   table { border-collapse: collapse; width: 95%; margin: 20px auto; background: white; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #333; color: white; }
@@ -14,6 +15,7 @@
 </head>
 <body>
 <h1>All Planes Ever Seen</h1>
+<input type="text" id="search" placeholder="Search by flight, hex, etc.">
 <table id="planes-table">
   <thead>
     <tr>
@@ -24,6 +26,7 @@
       <th>Lat</th>
       <th>Lon</th>
       <th>Timestamp</th>
+      <th>Source</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -39,18 +42,20 @@ const LOCAL_STORAGE_KEY = 'allPlanesData';
 // --- FUNCTIONS ---
 async function fetchPlanes() {
     try {
-        // Fetch GitHub historical data
         const githubResponse = await fetch(GITHUB_URL);
         const githubData = await githubResponse.json();
+        // Mark GitHub planes as source "GitHub"
+        for (const hex in githubData) {
+            githubData[hex].source = 'GitHub';
+        }
 
-        // Fetch AirNav live data
         const airnavResponse = await fetch(AIRNAV_URL);
         const airnavData = await airnavResponse.json();
+        // Mark AirNav planes as source "AirNav"
+        airnavData.forEach(plane => plane.source = 'AirNav');
 
-        // Merge data
         const mergedData = mergeData(githubData, airnavData);
 
-        // Save to localStorage and display
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedData));
         displayPlanes(mergedData);
     } catch (e) {
@@ -61,7 +66,7 @@ async function fetchPlanes() {
 }
 
 function mergeData(historical, live) {
-    const merged = {...historical}; // start with historical data
+    const merged = {...historical};
     live.forEach(plane => {
         const hex = plane.hex || plane.icao;
         if (!merged[hex]) {
@@ -76,7 +81,9 @@ function mergeData(historical, live) {
 function displayPlanes(data) {
     const tbody = document.querySelector('#planes-table tbody');
     tbody.innerHTML = '';
-    const planes = Object.values(data).sort((a,b) => (a.flight || '').localeCompare(b.flight || ''));
+
+    const planes = Object.values(data)
+        .sort((a,b) => new Date(b.lastSeen || b.firstSeen || 0) - new Date(a.lastSeen || a.firstSeen || 0));
 
     planes.forEach(plane => {
         const row = document.createElement('tr');
@@ -87,15 +94,26 @@ function displayPlanes(data) {
             <td>${plane.altitude || plane.alt_baro || plane.alt_geom || ''}</td>
             <td>${plane.lat || ''}</td>
             <td>${plane.lon || ''}</td>
-            <td>${plane.firstSeen || ''}</td>
+            <td>${plane.lastSeen || plane.firstSeen || ''}</td>
+            <td>${plane.source || ''}</td>
         `;
         tbody.appendChild(row);
     });
 }
 
+// --- SEARCH FUNCTION ---
+document.getElementById('search').addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#planes-table tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
 // --- INITIALIZE ---
 fetchPlanes();
-setInterval(fetchPlanes, 30000); // refresh every 30s
+setInterval(fetchPlanes, 30000);
 </script>
 </body>
 </html>
