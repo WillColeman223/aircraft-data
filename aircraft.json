@@ -1444,5 +1444,15 @@
     "messages": 9,
     "seen": 1.4,
     "rssi": -31.0
+  },
+  "40093e": {
+    "hex": "40093e",
+    "squawk": "2051",
+    "altitude": 6800,
+    "mlat": [],
+    "tisb": [],
+    "messages": 4,
+    "seen": 1.1,
+    "rssi": -34.0
   }
 }
