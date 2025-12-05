@@ -2037,5 +2037,18 @@
     "messages": 3,
     "seen": 0.3,
     "rssi": -34.5
+  },
+  "80159e": {
+    "hex": "80159e",
+    "squawk": "3420",
+    "altitude": 4850,
+    "vert_rate": 896,
+    "track": 137,
+    "speed": 181,
+    "mlat": [],
+    "tisb": [],
+    "messages": 13,
+    "seen": 0.1,
+    "rssi": -30.1
   }
 }
