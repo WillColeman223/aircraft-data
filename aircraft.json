@@ -1432,5 +1432,17 @@
     "messages": 9,
     "seen": 0.3,
     "rssi": -28.8
+  },
+  "407aaf": {
+    "hex": "407aaf",
+    "altitude": 20100,
+    "vert_rate": 1664,
+    "track": 326,
+    "speed": 343,
+    "mlat": [],
+    "tisb": [],
+    "messages": 9,
+    "seen": 1.4,
+    "rssi": -31.0
   }
 }
