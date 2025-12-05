@@ -1490,5 +1490,25 @@
     "messages": 8,
     "seen": 1.3,
     "rssi": -30.3
+  },
+  "a254dd": {
+    "hex": "a254dd",
+    "flight": "UAL923  ",
+    "altitude": 7000,
+    "category": "A5",
+    "mlat": [],
+    "tisb": [],
+    "messages": 8,
+    "seen": 1.2,
+    "rssi": -31.7
+  },
+  "4080e0": {
+    "hex": "4080e0",
+    "altitude": 4525,
+    "mlat": [],
+    "tisb": [],
+    "messages": 7,
+    "seen": 6.1,
+    "rssi": -31.1
   }
 }
