@@ -1647,5 +1647,13 @@
     "messages": 8,
     "seen": 1.8,
     "rssi": -30.5
+  },
+  "4d21a0": {
+    "hex": "4d21a0",
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 0.3,
+    "rssi": -37.5
   }
 }
