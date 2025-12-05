@@ -1728,5 +1728,16 @@
     "messages": 117,
     "seen": 0.2,
     "rssi": -27.8
+  },
+  "4d20e1": {
+    "hex": "4d20e1",
+    "squawk": "6317",
+    "flight": "AXY942U ",
+    "altitude": 4425,
+    "mlat": [],
+    "tisb": [],
+    "messages": 12,
+    "seen": 0.0,
+    "rssi": -30.0
   }
 }
