@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ADS-B Plane Tracker</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
+  h1 { text-align: center; margin-top: 20px; }
+  table { border-collapse: collapse; width: 90%; margin: 20px auto; background: white; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background: #333; color: white; }
+  tr:nth-child(even) { background: #f9f9f9; }
+</style>
+</head>
+<body>
+<h1>All Planes Ever Seen</h1>
+<table id="planes-table">
+  <thead>
+    <tr>
+      <th>Hex</th>
+      <th>Flight</th>
+      <th>Squawk</th>
+      <th>Altitude</th>
+      <th>Lat</th>
+      <th>Lon</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+// --- CONFIG ---
+const DATA_URL = 'https://raw.githubusercontent.com/WillColeman223/aircraft-data/main/aircraft.json';
+const LOCAL_STORAGE_KEY = 'allPlanesData';
+
+// --- FUNCTIONS ---
+async function fetchPlanes() {
+    try {
+        const response = await fetch(DATA_URL);
+        const data = await response.json();
+        saveToLocal(data);
+        displayPlanes(data);
+    } catch (e) {
+        console.log('Error fetching remote data, using local storage.', e);
+        const localData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+        displayPlanes(localData);
+    }
+}
+
+function saveToLocal(data) {
+    const storedData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+    for (const hex in data) {
+        storedData[hex] = data[hex];
+        if (!storedData[hex].firstSeen) {
+            storedData[hex].firstSeen = new Date().toISOString();
+        }
+    }
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedData));
+}
+
+function displayPlanes(data) {
+    const tbody = document.querySelector('#planes-table tbody');
+    tbody.innerHTML = '';
+    const planes = Object.values(data).sort((a,b) => a.flight?.localeCompare(b.flight || '') || 0);
+    planes.forEach(plane => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${plane.hex || ''}</td>
+            <td>${plane.flight || ''}</td>
+            <td>${plane.squawk || ''}</td>
+            <td>${plane.alt_baro || plane.alt_geom || ''}</td>
+            <td>${plane.lat || ''}</td>
+            <td>${plane.lon || ''}</td>
+            <td>${plane.firstSeen || ''}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// --- INITIALIZE ---
+fetchPlanes();
+
+// Optional: auto-refresh every 30s
+setInterval(fetchPlanes, 30000);
+</script>
+</body>
+</html>
