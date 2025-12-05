@@ -2026,5 +2026,16 @@
     "messages": 16,
     "seen": 0.2,
     "rssi": -28.1
+  },
+  "407b54": {
+    "hex": "407b54",
+    "vert_rate": 2944,
+    "track": 81,
+    "speed": 327,
+    "mlat": [],
+    "tisb": [],
+    "messages": 3,
+    "seen": 0.3,
+    "rssi": -34.5
   }
 }
