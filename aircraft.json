@@ -1752,5 +1752,13 @@
     "messages": 9,
     "seen": 1.7,
     "rssi": -29.5
+  },
+  "48c128": {
+    "hex": "48c128",
+    "mlat": [],
+    "tisb": [],
+    "messages": 4,
+    "seen": 0.8,
+    "rssi": -34.6
   }
 }
