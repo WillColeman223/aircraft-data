@@ -6,7 +6,7 @@
 <style>
   body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
   h1 { text-align: center; margin-top: 20px; }
-  table { border-collapse: collapse; width: 90%; margin: 20px auto; background: white; }
+  table { border-collapse: collapse; width: 95%; margin: 20px auto; background: white; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #333; color: white; }
   tr:nth-child(even) { background: #f9f9f9; }
@@ -31,45 +31,60 @@
 
 <script>
 // --- CONFIG ---
-const DATA_URL = 'https://raw.githubusercontent.com/WillColeman223/aircraft-data/main/aircraft.json';
+const AIRNAV_API_KEY = '245528f9314182ab8216ab3ca0f7bda5971e4e04';
+const AIRNAV_URL = `https://api.airnav.com/v1/radar/aircraft?apikey=${AIRNAV_API_KEY}`;
+const GITHUB_URL = 'https://raw.githubusercontent.com/WillColeman223/aircraft-data/main/aircraft.json';
 const LOCAL_STORAGE_KEY = 'allPlanesData';
 
 // --- FUNCTIONS ---
 async function fetchPlanes() {
     try {
-        const response = await fetch(DATA_URL);
-        const data = await response.json();
-        saveToLocal(data);
-        displayPlanes(data);
+        // Fetch GitHub historical data
+        const githubResponse = await fetch(GITHUB_URL);
+        const githubData = await githubResponse.json();
+
+        // Fetch AirNav live data
+        const airnavResponse = await fetch(AIRNAV_URL);
+        const airnavData = await airnavResponse.json();
+
+        // Merge data
+        const mergedData = mergeData(githubData, airnavData);
+
+        // Save to localStorage and display
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedData));
+        displayPlanes(mergedData);
     } catch (e) {
-        console.log('Error fetching remote data, using local storage.', e);
+        console.log('Error fetching data, using local storage.', e);
         const localData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
         displayPlanes(localData);
     }
 }
 
-function saveToLocal(data) {
-    const storedData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
-    for (const hex in data) {
-        storedData[hex] = data[hex];
-        if (!storedData[hex].firstSeen) {
-            storedData[hex].firstSeen = new Date().toISOString();
+function mergeData(historical, live) {
+    const merged = {...historical}; // start with historical data
+    live.forEach(plane => {
+        const hex = plane.hex || plane.icao;
+        if (!merged[hex]) {
+            merged[hex] = {...plane, firstSeen: new Date().toISOString()};
+        } else {
+            merged[hex] = {...merged[hex], ...plane};
         }
-    }
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedData));
+    });
+    return merged;
 }
 
 function displayPlanes(data) {
     const tbody = document.querySelector('#planes-table tbody');
     tbody.innerHTML = '';
-    const planes = Object.values(data).sort((a,b) => a.flight?.localeCompare(b.flight || '') || 0);
+    const planes = Object.values(data).sort((a,b) => (a.flight || '').localeCompare(b.flight || ''));
+
     planes.forEach(plane => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${plane.hex || ''}</td>
+            <td>${plane.hex || plane.icao || ''}</td>
             <td>${plane.flight || ''}</td>
             <td>${plane.squawk || ''}</td>
-            <td>${plane.alt_baro || plane.alt_geom || ''}</td>
+            <td>${plane.altitude || plane.alt_baro || plane.alt_geom || ''}</td>
             <td>${plane.lat || ''}</td>
             <td>${plane.lon || ''}</td>
             <td>${plane.firstSeen || ''}</td>
@@ -80,9 +95,7 @@ function displayPlanes(data) {
 
 // --- INITIALIZE ---
 fetchPlanes();
-
-// Optional: auto-refresh every 30s
-setInterval(fetchPlanes, 30000);
+setInterval(fetchPlanes, 30000); // refresh every 30s
 </script>
 </body>
 </html>
