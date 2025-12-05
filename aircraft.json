@@ -1454,5 +1454,23 @@
     "messages": 4,
     "seen": 1.1,
     "rssi": -34.0
+  },
+  "344345": {
+    "hex": "344345",
+    "squawk": "5416",
+    "flight": "IBE07PP ",
+    "lat": 51.363647,
+    "lon": -1.001537,
+    "nucp": 7,
+    "seen_pos": 0.1,
+    "altitude": 11050,
+    "vert_rate": 1280,
+    "track": 210,
+    "speed": 306,
+    "mlat": [],
+    "tisb": [],
+    "messages": 111,
+    "seen": 0.1,
+    "rssi": -27.8
   }
 }
