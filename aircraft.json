@@ -561,5 +561,33 @@
     "messages": 2,
     "seen": 2.8,
     "rssi": -37.9
+  },
+  "407eb2": {
+    "hex": "407eb2",
+    "squawk": "0511",
+    "flight": "BAW7RL  ",
+    "altitude": 7825,
+    "vert_rate": 4544,
+    "track": 206,
+    "speed": 258,
+    "category": "A3",
+    "mlat": [],
+    "tisb": [],
+    "messages": 16,
+    "seen": 0.3,
+    "rssi": -29.0
+  },
+  "44ccd8": {
+    "hex": "44ccd8",
+    "squawk": "4410",
+    "altitude": 35025,
+    "vert_rate": 832,
+    "track": 276,
+    "speed": 405,
+    "mlat": [],
+    "tisb": [],
+    "messages": 7,
+    "seen": 2.5,
+    "rssi": -31.8
   }
 }
