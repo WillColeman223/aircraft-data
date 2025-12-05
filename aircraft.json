@@ -1420,5 +1420,17 @@
     "messages": 2,
     "seen": 0.1,
     "rssi": -36.7
+  },
+  "407fcb": {
+    "hex": "407fcb",
+    "altitude": 18850,
+    "vert_rate": -2624,
+    "track": 19,
+    "speed": 382,
+    "mlat": [],
+    "tisb": [],
+    "messages": 9,
+    "seen": 0.3,
+    "rssi": -28.8
   }
 }
