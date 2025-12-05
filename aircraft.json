@@ -1681,5 +1681,15 @@
     "messages": 8,
     "seen": 1.3,
     "rssi": -31.4
+  },
+  "407d10": {
+    "hex": "407d10",
+    "squawk": "2344",
+    "altitude": 15000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 26,
+    "seen": 1.0,
+    "rssi": -28.9
   }
 }
