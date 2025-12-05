@@ -1481,5 +1481,14 @@
     "messages": 2,
     "seen": 0.7,
     "rssi": -38.0
+  },
+  "4cafc3": {
+    "hex": "4cafc3",
+    "altitude": 15025,
+    "mlat": [],
+    "tisb": [],
+    "messages": 8,
+    "seen": 1.3,
+    "rssi": -30.3
   }
 }
