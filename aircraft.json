@@ -550,5 +550,16 @@
     "messages": 2,
     "seen": 2.6,
     "rssi": -35.9
+  },
+  "4ca56d": {
+    "hex": "4ca56d",
+    "vert_rate": 1728,
+    "track": 162,
+    "speed": 458,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 2.8,
+    "rssi": -37.9
   }
 }
