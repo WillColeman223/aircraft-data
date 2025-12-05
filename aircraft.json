@@ -1806,5 +1806,16 @@
     "messages": 15,
     "seen": 1.1,
     "rssi": -29.2
+  },
+  "4402ac": {
+    "hex": "4402ac",
+    "vert_rate": -64,
+    "track": 323,
+    "speed": 394,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 5.8,
+    "rssi": -36.7
   }
 }
