@@ -725,5 +725,32 @@
     "messages": 4,
     "seen": 0.7,
     "rssi": -34.2
+  },
+  "4caee8": {
+    "hex": "4caee8",
+    "squawk": "5312",
+    "lat": 50.625791,
+    "lon": -0.971251,
+    "nucp": 7,
+    "seen_pos": 0.6,
+    "altitude": 38000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 26,
+    "seen": 0.2,
+    "rssi": -29.7
+  },
+  "4081c0": {
+    "hex": "4081c0",
+    "squawk": "5512",
+    "altitude": 20175,
+    "vert_rate": -2368,
+    "track": 23,
+    "speed": 410,
+    "mlat": [],
+    "tisb": [],
+    "messages": 20,
+    "seen": 0.0,
+    "rssi": -29.7
   }
 }
