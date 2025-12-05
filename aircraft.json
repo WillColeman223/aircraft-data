@@ -1907,5 +1907,13 @@
     "messages": 29,
     "seen": 0.6,
     "rssi": -29.4
+  },
+  "4075bb": {
+    "hex": "4075bb",
+    "mlat": [],
+    "tisb": [],
+    "messages": 6,
+    "seen": 3.3,
+    "rssi": -31.8
   }
 }
