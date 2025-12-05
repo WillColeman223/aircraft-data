@@ -1770,5 +1770,14 @@
     "messages": 18,
     "seen": 0.3,
     "rssi": -30.7
+  },
+  "494105": {
+    "hex": "494105",
+    "altitude": 43000,
+    "mlat": [],
+    "tisb": [],
+    "messages": 2,
+    "seen": 3.0,
+    "rssi": -37.7
   }
 }
