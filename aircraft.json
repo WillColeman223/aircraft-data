@@ -1915,5 +1915,17 @@
     "messages": 6,
     "seen": 3.3,
     "rssi": -31.8
+  },
+  "4caa5c": {
+    "hex": "4caa5c",
+    "altitude": 36000,
+    "vert_rate": 0,
+    "track": 321,
+    "speed": 397,
+    "mlat": [],
+    "tisb": [],
+    "messages": 8,
+    "seen": 1.9,
+    "rssi": -30.8
   }
 }
