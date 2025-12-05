@@ -752,5 +752,13 @@
     "messages": 20,
     "seen": 0.0,
     "rssi": -29.7
+  },
+  "4d23fa": {
+    "hex": "4d23fa",
+    "mlat": [],
+    "tisb": [],
+    "messages": 3,
+    "seen": 0.2,
+    "rssi": -36.5
   }
 }
