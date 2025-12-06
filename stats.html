@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FlightBank - Statistics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      background-color: #8B0000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1;
+    }
+
+    ul li a {
+      display: block;
+      color: white;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    ul li a:hover {
+      background-color: #111111;
+    }
+
+    .menu-items {
+      display: flex;
+      gap: 0;
+    }
+
+    h1 { margin: 20px 0; }
+
+    #chartContainer {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+<ul>
+  <div class="menu-items">
+    <li><a href="https://willcoleman223.github.io/aircraft-data/index.html">FlightBank</a></li>
+    <li><a href="https://willcoleman223.github.io/aircraft-data/stats.html">Statistics</a></li>
+  </div>
+</ul>
+
+<h1>FlightBank - Airlines Statistics</h1>
+
+<div id="chartContainer">
+  <canvas id="airlineChart"></canvas>
+</div>
+
+<script>
+const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
+
+async function fetchAndRenderStats() {
+  try {
+    const response = await fetch(FIREBASE_URL);
+    const data = await response.json();
+    if (!data) return;
+
+    // Count airlines by callsign prefix (first 2-3 letters)
+    const counts = {};
+    Object.values(data).forEach(plane => {
+      if (!plane.Callsign) return;
+      const prefix = plane.Callsign.match(/^[A-Z]{2,3}/)?.[0] || "Other";
+      counts[prefix] = (counts[prefix] || 0) + 1;
+    });
+
+    const labels = Object.keys(counts).sort();
+    const values = labels.map(l => counts[l]);
+
+    // generate random colors for the chart
+    const colors = labels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
+
+    const ctx = document.getElementById('airlineChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Number of Planes',
+          data: values,
+          backgroundColor: colors,
+          borderColor: '#fff',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' },
+          title: { display: true, text: 'Planes by Airline Prefix' }
+        }
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching plane data:", err);
+  }
+}
+
+// initial fetch + auto-refresh every 30s
+fetchAndRenderStats();
+setInterval(fetchAndRenderStats, 30000);
+</script>
+</body>
+</html>
