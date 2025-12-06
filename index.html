@@ -1,103 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Live Flights Dashboard</title>
-<style>
-  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
-  h1 { text-align: center; margin-bottom: 20px; }
-  .grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
-  .flight-box {
-    background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    width: 180px; text-align: center; padding: 10px; transition: transform 0.2s;
-  }
-  .flight-box:hover { transform: scale(1.05); }
-  .flight-img { width: 100%; height: auto; border-radius: 5px; }
-  .callsign { font-weight: bold; margin: 5px 0; }
-  .reg { color: #555; font-size: 0.9em; margin-bottom: 5px; }
-  .link { display: block; margin-top: 5px; color: #0077cc; text-decoration: none; font-size: 0.85em; }
-  .link:hover { text-decoration: underline; }
-</style>
+  <meta charset="UTF-8">
+  <title>FlightBank</title>
+  <style>
+    body {
+  margin: 0;
+  padding: 0;
+}
+
+h2, p {
+  margin: 10px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #8B0000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1;
+}
+
+ul li a {
+  display: block;
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+ul li a:hover {
+  background-color: #111111;
+}
+.menu-items {
+  display: flex;
+  gap: 0;
+}
+#searchBar {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #600000;
+  margin-right: 15px;
+  background-color: #A00000;
+  color: white;
+}
+#searchBar::placeholder {
+  color: #ddd;
+}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    h1, h2 { text-align: center; }
+    #stats {
+      display: flex;
+      justify-content: left;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    #stats div {
+      background: #2196F3;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+    #searchBar {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      max-height: 70vh;
+      overflow-y: scroll;
+      padding: 10px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: scale(1.03); }
+    .card h2 { margin: 0 0 10px 0; font-size: 18px; }
+    .card p { margin: 5px 0; font-size: 14px; }
+    .card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #2196F3;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .card a:hover { background-color: #1976D2; }
+  </style>
 </head>
 <body>
+<ul>
+  <div class="menu-items">
+    <li><a href="#home">FlightBank</a></li>
+    <li><a href="#news">News</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#about">About</a></li>
+  </div>
+  <li><input type="text" id="searchBar" placeholder="Search by Callsign..." /></li>
+</ul>
 
-<h1>Live Flights Dashboard</h1>
-<div id="flights" class="grid"></div>
+<h1>FlightBank</h1>
+
+<div id="stats">
+  <div id="addedAllTime">Planes added all time: 0</div>
+</div>
+
+<div id="grid"></div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbyP5QTx4pkWYiwW5cSYGpb_JondOQvVlDDFLlgu8yZpt5QzT6-xjw6XiI8Yvd0BdnE/exec";
+  const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
 
-// Placeholder image
-function getPlaneImage(registration) {
-    return registration ? `https://via.placeholder.com/150?text=${registration}` : "https://via.placeholder.com/150?text=Plane";
-}
-
-// FlightRadar24 link
-function getFlightRadarLink(callsign) {
-    return callsign ? `https://www.flightradar24.com/data/flights/${callsign}` : "#";
-}
-
-// JetPhotos link
-function getJetPhotosLink(registration) {
-    return registration ? `https://www.jetphotos.com/photo/aircraft?registration=${registration}` : "#";
-}
-
-// Load and display flights
-async function loadFlights() {
+  async function fetchPlanes() {
     try {
-        const response = await fetch(SHEET_URL);
-        const data = await response.json();
-        const container = document.getElementById("flights");
-        container.innerHTML = "";
+      const response = await fetch(FIREBASE_URL);
+      const data = await response.json();
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
 
-        data.forEach(flight => {
-            const box = document.createElement("div");
-            box.className = "flight-box";
+      if (!data) return;
 
-            const img = document.createElement("img");
-            img.src = getPlaneImage(flight.registration);
-            img.alt = flight.callsign;
-            img.className = "flight-img";
+      // Sort by LastSeen descending
+      let planes = Object.values(data).sort((a,b) => new Date(b.LastSeen) - new Date(a.LastSeen));
 
-            const callsign = document.createElement("div");
-            callsign.className = "callsign";
-            callsign.textContent = flight.callsign || "N/A";
+      // Only show 20 latest planes
+      planes = planes.slice(0, 20);
 
-            const reg = document.createElement("div");
-            reg.className = "reg";
-            reg.textContent = flight.registration || "Unknown";
+      const today = new Date().toISOString().slice(0,10);
+      let addedTodayCount = 0;
+      let addedAllTimeCount = Object.keys(data).length;
 
-            const frLink = document.createElement("a");
-            frLink.href = getFlightRadarLink(flight.callsign);
-            frLink.target = "_blank";
-            frLink.className = "link";
-            frLink.textContent = "View on FlightRadar24";
+      planes.forEach(plane => {
+        if (plane.FirstSeen && plane.FirstSeen.startsWith(today)) addedTodayCount++;
 
-            const jpLink = document.createElement("a");
-            jpLink.href = getJetPhotosLink(flight.registration);
-            jpLink.target = "_blank";
-            jpLink.className = "link";
-            jpLink.textContent = "View JetPhotos";
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.callsign = plane.Callsign.toLowerCase();
 
-            box.appendChild(img);
-            box.appendChild(callsign);
-            box.appendChild(reg);
-            box.appendChild(frLink);
-            box.appendChild(jpLink);
+        // AirNav link (flight page)
+        const airNavLink = `https://www.airnavradar.com/flight/${plane.Callsign}`;
 
-            container.appendChild(box);
-        });
+        card.innerHTML = `
+          <h2>${plane.Callsign}</h2>
+          <p><strong>Hex:</strong> ${plane.Hex}</p>
+          <p><strong>First Seen:</strong> ${plane.FirstSeen}</p>
+          <p><strong>Last Seen:</strong> ${plane.LastSeen}</p>
+          <a href="${airNavLink}" target="_blank">View Flight</a>
+        `;
+        grid.appendChild(card);
+      });
 
-    } catch(err) {
-        console.error("Failed to load flights:", err);
+      document.getElementById("addedAllTime").textContent = `Planes added all time: ${addedAllTimeCount}`;
+
+    } catch (err) {
+      console.error("Error fetching plane data:", err);
     }
-}
+  }
 
-// Refresh every 60 seconds
-loadFlights();
-setInterval(loadFlights, 60000);
+  // Search bar filter
+  const searchInput = document.getElementById("searchBar");
+  searchInput.addEventListener("input", () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    document.querySelectorAll(".card").forEach(card => {
+      card.style.display = card.dataset.callsign.includes(searchTerm) ? "" : "none";
+    });
+  });
+
+  // Initial fetch + auto-refresh
+  fetchPlanes();
+  setInterval(fetchPlanes, 30000); // refresh every 30 seconds
 </script>
 
 </body>
 </html>
-
