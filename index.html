@@ -142,16 +142,13 @@ ul li a:hover {
       // Sort by LastSeen descending
       let planes = Object.values(data).sort((a,b) => new Date(b.LastSeen) - new Date(a.LastSeen));
 
-      // Only show 20 latest planes
-      planes = planes.slice(0, 20);
+      // ✅ REMOVE the slice so all planes are shown
+      // planes = planes.slice(0, 20);
 
       const today = new Date().toISOString().slice(0,10);
-      let addedTodayCount = 0;
       let addedAllTimeCount = Object.keys(data).length;
 
       planes.forEach(plane => {
-        if (plane.FirstSeen && plane.FirstSeen.startsWith(today)) addedTodayCount++;
-
         const card = document.createElement("div");
         card.className = "card";
         card.dataset.callsign = plane.Callsign.toLowerCase();
@@ -190,5 +187,7 @@ ul li a:hover {
   setInterval(fetchPlanes, 30000); // refresh every 30 seconds
 </script>
 
+
 </body>
 </html>
+
