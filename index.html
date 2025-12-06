@@ -5,63 +5,67 @@
   <title>FlightBank</title>
   <style>
     body {
-  margin: 0;
-  padding: 0;
-}
-
-h2, p {
-  margin: 10px;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  background-color: #8B0000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1;
-}
-
-ul li a {
-  display: block;
-  color: white;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-ul li a:hover {
-  background-color: #111111;
-}
-.menu-items {
-  display: flex;
-  gap: 0;
-}
-#searchBar {
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #600000;
-  margin-right: 15px;
-  background-color: #A00000;
-  color: white;
-}
-#searchBar::placeholder {
-  color: #ddd;
-}
-    body {
+      margin: 0;
+      padding: 0;
       font-family: Arial, sans-serif;
-      margin: 20px;
       background-color: #f5f5f5;
     }
+
+    h2, p {
+      margin: 10px;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      background-color: #8B0000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1;
+    }
+
+    ul li a {
+      display: block;
+      color: white;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    ul li a:hover {
+      background-color: #111111;
+    }
+
+    .menu-items {
+      display: flex;
+      gap: 0;
+    }
+
+    #searchBar {
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #600000;
+      margin-right: 15px;
+      background-color: #A00000;
+      color: white;
+    }
+
+    #searchBar::placeholder {
+      color: #ddd;
+    }
+
     h1, h2 { text-align: center; }
+
     #stats {
       display: flex;
       justify-content: left;
       gap: 30px;
       margin-bottom: 20px;
+      margin-left: 20px;
     }
+
     #stats div {
       background: #2196F3;
       color: white;
@@ -69,21 +73,27 @@ ul li a:hover {
       border-radius: 10px;
       font-size: 18px;
     }
+
     #searchBar {
       width: 300px;
       padding: 10px;
       font-size: 16px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      display: block;
+      margin-left: 20px;
+      margin-bottom: 20px;
     }
+
     #grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 15px;
       max-height: 70vh;
-      overflow-y: scroll;
+      overflow-y: auto;
       padding: 10px;
     }
+
     .card {
       background-color: #fff;
       border-radius: 10px;
@@ -92,7 +102,9 @@ ul li a:hover {
       text-align: center;
       transition: transform 0.2s;
     }
+
     .card:hover { transform: scale(1.03); }
+
     .card h2 { margin: 0 0 10px 0; font-size: 18px; }
     .card p { margin: 5px 0; font-size: 14px; }
     .card a {
@@ -111,8 +123,8 @@ ul li a:hover {
 <body>
 <ul>
   <div class="menu-items">
-    <li><a href="#home">FlightBank</a></li>
-    <li><a href="#news">News</a></li>
+    <li><a href="https://willcoleman223.github.io/aircraft-data/index.html">FlightBank</a></li>
+    <li><a href="https://willcoleman223.github.io/aircraft-data/stats.html">Statistics</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#about">About</a></li>
   </div>
@@ -128,66 +140,75 @@ ul li a:hover {
 <div id="grid"></div>
 
 <script>
-  const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
+const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
+let allPlanes = [];
+let displayedCount = 0;
+const BATCH_SIZE = 30; // render 30 planes at a time
 
-  async function fetchPlanes() {
-    try {
-      const response = await fetch(FIREBASE_URL);
-      const data = await response.json();
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
+async function fetchPlanes() {
+  try {
+    const response = await fetch(FIREBASE_URL);
+    const data = await response.json();
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    if (!data) return;
 
-      if (!data) return;
+    allPlanes = Object.values(data).sort((a,b) => new Date(b.LastSeen) - new Date(a.LastSeen));
+    displayedCount = 0;
 
-      // Sort by LastSeen descending
-      let planes = Object.values(data).sort((a,b) => new Date(b.LastSeen) - new Date(a.LastSeen));
+    document.getElementById("addedAllTime").textContent = `Planes added all time: ${allPlanes.length}`;
 
-      // ✅ REMOVE the slice so all planes are shown
-      // planes = planes.slice(0, 20);
-
-      const today = new Date().toISOString().slice(0,10);
-      let addedAllTimeCount = Object.keys(data).length;
-
-      planes.forEach(plane => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.dataset.callsign = plane.Callsign.toLowerCase();
-
-        // AirNav link (flight page)
-        const airNavLink = `https://www.airnavradar.com/flight/${plane.Callsign}`;
-
-        card.innerHTML = `
-          <h2>${plane.Callsign}</h2>
-          <p><strong>Hex:</strong> ${plane.Hex}</p>
-          <p><strong>First Updated:</strong> ${plane.FirstSeen}</p>
-          <p><strong>Last Updated:</strong> ${plane.LastSeen}</p>
-          <a href="${airNavLink}" target="_blank">View Flight</a>
-        `;
-        grid.appendChild(card);
-      });
-
-      document.getElementById("addedAllTime").textContent = `Planes added all time: ${addedAllTimeCount}`;
-
-    } catch (err) {
-      console.error("Error fetching plane data:", err);
-    }
+    renderNextBatch();
+  } catch (err) {
+    console.error("Error fetching plane data:", err);
   }
+}
 
-  // Search bar filter
-  const searchInput = document.getElementById("searchBar");
-  searchInput.addEventListener("input", () => {
-    const searchTerm = searchInput.value.toLowerCase();
-    document.querySelectorAll(".card").forEach(card => {
-      card.style.display = card.dataset.callsign.includes(searchTerm) ? "" : "none";
-    });
-  });
+function renderNextBatch() {
+  const grid = document.getElementById("grid");
+  const searchTerm = document.getElementById("searchBar").value.toLowerCase();
 
-  // Initial fetch + auto-refresh
-  fetchPlanes();
-  setInterval(fetchPlanes, 30000); // refresh every 30 seconds
+  let rendered = 0;
+  while (displayedCount < allPlanes.length && rendered < BATCH_SIZE) {
+    const plane = allPlanes[displayedCount];
+    displayedCount++;
+
+    if (!plane.Callsign || (searchTerm && !plane.Callsign.toLowerCase().includes(searchTerm))) continue;
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.callsign = plane.Callsign.toLowerCase();
+    card.innerHTML = `
+      <h2>${plane.Callsign}</h2>
+      <p><strong>Hex:</strong> ${plane.Hex}</p>
+      <p><strong>First Updated:</strong> ${plane.FirstSeen}</p>
+      <p><strong>Last Updated:</strong> ${plane.LastSeen}</p>
+      <a href="https://www.airnavradar.com/flight/${plane.Callsign}" target="_blank">View Flight</a>
+    `;
+    grid.appendChild(card);
+    rendered++;
+  }
+}
+
+// infinite scroll
+document.getElementById("grid").addEventListener("scroll", () => {
+  const grid = document.getElementById("grid");
+  if (grid.scrollTop + grid.clientHeight >= grid.scrollHeight - 20) {
+    renderNextBatch();
+  }
+});
+
+// search filter
+document.getElementById("searchBar").addEventListener("input", () => {
+  displayedCount = 0;
+  document.getElementById("grid").innerHTML = "";
+  renderNextBatch();
+});
+
+// initial fetch + auto-refresh
+fetchPlanes();
+setInterval(fetchPlanes, 30000); // refresh every 30 seconds
 </script>
-
 
 </body>
 </html>
-
