@@ -48,7 +48,7 @@
       justify-content: center;
       gap: 30px;
       max-width: 1200px;
-      margin: 0 auto 50px auto;
+      margin: 0 auto 30px auto;
     }
 
     .chartBox {
@@ -58,6 +58,18 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       flex: 1 1 400px;
       max-width: 600px;
+    }
+
+    /* Counter styling */
+    #counterBox {
+      background: white;
+      padding: 20px;
+      margin: 20px auto 60px auto;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      width: 300px;
+      font-size: 26px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -84,14 +96,43 @@
   </div>
 </div>
 
+<!-- ✨ Animated Counter -->
+<div id="counterBox">
+  Total Planes Counted: <span id="planeCounter">0</span>
+</div>
+
 <script>
 const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
+
+let currentDisplayedTotal = 0; // for animation
+
+function animateCounter(target) {
+  const counter = document.getElementById("planeCounter");
+  const duration = 800; // 0.8 sec animation
+  const start = currentDisplayedTotal;
+  const startTime = performance.now();
+
+  function update(time) {
+    const progress = Math.min((time - startTime) / duration, 1);
+    const value = Math.floor(start + (target - start) * progress);
+    counter.textContent = value;
+
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+  currentDisplayedTotal = target;
+}
 
 async function fetchAndRenderStats() {
   try {
     const response = await fetch(FIREBASE_URL);
     const data = await response.json();
     if (!data) return;
+
+    // Update animated total counter
+    const totalPlanes = Object.keys(data).length;
+    animateCounter(totalPlanes);
 
     // Count airlines by callsign prefix
     const counts = {};
@@ -164,7 +205,6 @@ async function fetchAndRenderStats() {
   }
 }
 
-// initial fetch + auto-refresh every 30s
 fetchAndRenderStats();
 setInterval(fetchAndRenderStats, 30000);
 </script>
