@@ -42,28 +42,46 @@
 
     h1 { margin: 20px 0; }
 
-    #chartContainer {
-      max-width: 800px;
-      margin: 0 auto;
+    #chartsContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto 50px auto;
+    }
+
+    .chartBox {
       background-color: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      flex: 1 1 400px;
+      max-width: 600px;
     }
   </style>
 </head>
 <body>
 <ul>
   <div class="menu-items">
-    <li><a href="https://willcoleman223.github.io/aircraft-data/index.html">FlightBank</a></li>
-    <li><a href="https://willcoleman223.github.io/aircraft-data/stats.html">Statistics</a></li>
+    <li><a href="index.html">FlightBank</a></li>
+    <li><a href="stats.html">Statistics</a></li>
+    <li><a href="index.html">About</a></li>
+    <li><a href="stats.html">Contribute</a></li>
   </div>
 </ul>
 
 <h1>FlightBank - Airlines Statistics</h1>
 
-<div id="chartContainer">
-  <canvas id="airlineChart"></canvas>
+<div id="chartsContainer">
+  <div class="chartBox">
+    <h2>All Airlines (Pie Chart)</h2>
+    <canvas id="airlinePieChart"></canvas>
+  </div>
+  <div class="chartBox">
+    <h2>Top 10 Airlines (Bar Chart)</h2>
+    <canvas id="airlineBarChart"></canvas>
+  </div>
 </div>
 
 <script>
@@ -75,7 +93,7 @@ async function fetchAndRenderStats() {
     const data = await response.json();
     if (!data) return;
 
-    // Count airlines by callsign prefix (first 2-3 letters)
+    // Count airlines by callsign prefix
     const counts = {};
     Object.values(data).forEach(plane => {
       if (!plane.Callsign) return;
@@ -83,21 +101,20 @@ async function fetchAndRenderStats() {
       counts[prefix] = (counts[prefix] || 0) + 1;
     });
 
-    const labels = Object.keys(counts).sort();
-    const values = labels.map(l => counts[l]);
+    // --- Pie chart data ---
+    const pieLabels = Object.keys(counts).sort();
+    const pieValues = pieLabels.map(l => counts[l]);
+    const pieColors = pieLabels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
 
-    // generate random colors for the chart
-    const colors = labels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
-
-    const ctx = document.getElementById('airlineChart').getContext('2d');
-    new Chart(ctx, {
+    const pieCtx = document.getElementById('airlinePieChart').getContext('2d');
+    new Chart(pieCtx, {
       type: 'pie',
       data: {
-        labels: labels,
+        labels: pieLabels,
         datasets: [{
           label: 'Number of Planes',
-          data: values,
-          backgroundColor: colors,
+          data: pieValues,
+          backgroundColor: pieColors,
           borderColor: '#fff',
           borderWidth: 1
         }]
@@ -110,6 +127,38 @@ async function fetchAndRenderStats() {
         }
       }
     });
+
+    // --- Bar chart data (top 10) ---
+    const sortedAirlines = Object.entries(counts)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 10);
+    const barLabels = sortedAirlines.map(e => e[0]);
+    const barValues = sortedAirlines.map(e => e[1]);
+    const barColors = barLabels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
+
+    const barCtx = document.getElementById('airlineBarChart').getContext('2d');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: barLabels,
+        datasets: [{
+          label: 'Number of Planes',
+          data: barValues,
+          backgroundColor: barColors
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Top 10 Airlines by Plane Count' }
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
+    });
+
   } catch (err) {
     console.error("Error fetching plane data:", err);
   }
