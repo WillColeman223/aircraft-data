@@ -43,11 +43,11 @@
     }
 
     #searchBar {
-      padding: 8px 12px;
+      padding: 8px 12px; 
       font-size: 14px;
       border-radius: 5px;
-      border: 1px solid #600000;
-      margin-right: 15px;
+      border: 2px solid #600000;
+      margin-right: 0px;
       background-color: #A00000;
       color: white;
     }
@@ -66,23 +66,18 @@
       margin-left: 20px;
     }
 
-    #stats div {
-      background: #2196F3;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 10px;
-      font-size: 18px;
-    }
+    
+    
 
     #searchBar {
       width: 300px;
-      padding: 10px;
+      padding: 15px;
       font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      border-radius: 1px;
+      border: 3px solid #ccc;
       display: block;
-      margin-left: 20px;
-      margin-bottom: 20px;
+      margin-left: 5px;
+      margin-bottom: 0px;
     }
 
     #grid {
@@ -125,8 +120,8 @@
   <div class="menu-items">
     <li><a href="https://willcoleman223.github.io/aircraft-data/index.html">FlightBank</a></li>
     <li><a href="https://willcoleman223.github.io/aircraft-data/stats.html">Statistics</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#about">About</a></li>
+    <li><a href="#contact">About</a></li>
+    <li><a href="#about">Contribute</a></li>
   </div>
   <li><input type="text" id="searchBar" placeholder="Search by Callsign..." /></li>
 </ul>
@@ -156,7 +151,7 @@ async function fetchPlanes() {
     allPlanes = Object.values(data).sort((a,b) => new Date(b.LastSeen) - new Date(a.LastSeen));
     displayedCount = 0;
 
-    document.getElementById("addedAllTime").textContent = `Planes added all time: ${allPlanes.length}`;
+    document.getElementById("addedAllTime").textContent = ` `;
 
     renderNextBatch();
   } catch (err) {
