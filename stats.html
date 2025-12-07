@@ -21,7 +21,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 1;
     }
 
     ul li a {
@@ -60,7 +59,6 @@
       max-width: 600px;
     }
 
-    /* Counter styling */
     #counterBox {
       background: white;
       padding: 20px;
@@ -71,9 +69,21 @@
       font-size: 26px;
       font-weight: bold;
     }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .btn-add { background: #8B0000; color: white; }
+    .btn-clear { background: #444; color: white; }
   </style>
 </head>
 <body>
+
 <ul>
   <div class="menu-items">
     <li><a href="index.html">FlightBank</a></li>
@@ -86,23 +96,44 @@
 <h1>FlightBank - Airlines Statistics</h1>
 
 <div id="chartsContainer">
+
+  <!-- CUSTOM PIE CHART -->
   <div class="chartBox">
-    <h2>All Airlines (Pie Chart)</h2>
+    <h2>Airline Pie Chart</h2>
+
+    <input 
+      type="text" 
+      id="airlineInput" 
+      placeholder="Add airline prefix (e.g. RYR, BAW)"
+      style="padding:10px; width:70%; font-size:16px; border-radius:8px; margin-bottom:15px;"
+    >
+
+    <button onclick="addAirline()" class="btn btn-add">Add Airline</button>
+    <button onclick="clearAirlines()" class="btn btn-clear">Clear</button>
+
+    <p id="selectedAirlinesText" style="margin-top:10px; font-weight:bold;">
+      Default: Top 10 Airlines
+    </p>
+
     <canvas id="airlinePieChart"></canvas>
   </div>
+
+  <!-- TOP 10 BAR CHART -->
   <div class="chartBox">
     <h2>Top 10 Airlines (Bar Chart)</h2>
     <canvas id="airlineBarChart"></canvas>
   </div>
+
 </div>
 
-<!-- ✨ Animated Counter -->
+<!-- COUNTER -->
 <div id="counterBox">
   Total Planes Counted: <span id="planeCounter">0</span>
 </div>
-<!-- ✨ Embedded AirNavRadar Station -->
+
+<!-- AIRNAV -->
 <div style="margin: 40px auto; max-width: 1200px; text-align: center;">
-  <h2>Our own flight reciever:</h2>
+  <h2>Our own flight receiver:</h2>
   <iframe 
     src="https://www.airnavradar.com/stations/EXTRPI704101" 
     style="width:100%; height:800px; border:1px solid #ccc; border-radius:10px;"
@@ -113,11 +144,15 @@
 <script>
 const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
 
-let currentDisplayedTotal = 0; // for animation
+let currentDisplayedTotal = 0;
+let allCounts = {};
+let selectedAirlines = [];
+let pieChart = null;
+let top10List = [];
 
 function animateCounter(target) {
   const counter = document.getElementById("planeCounter");
-  const duration = 800; // 0.8 sec animation
+  const duration = 800;
   const start = currentDisplayedTotal;
   const startTime = performance.now();
 
@@ -125,12 +160,87 @@ function animateCounter(target) {
     const progress = Math.min((time - startTime) / duration, 1);
     const value = Math.floor(start + (target - start) * progress);
     counter.textContent = value;
-
     if (progress < 1) requestAnimationFrame(update);
   }
 
   requestAnimationFrame(update);
   currentDisplayedTotal = target;
+}
+
+function addAirline() {
+  const input = document.getElementById("airlineInput");
+  const prefix = input.value.toUpperCase().trim();
+
+  if (!prefix) return;
+
+  if (!allCounts[prefix]) {
+    alert("Airline prefix not found in the database!");
+    input.value = "";
+    return;
+  }
+
+  if (!selectedAirlines.includes(prefix)) {
+    selectedAirlines.push(prefix);
+  }
+
+  input.value = "";
+  updatePieChart();
+}
+
+function clearAirlines() {
+  selectedAirlines = [];
+  updatePieChart();
+}
+
+function updateSelectedAirlinesText() {
+  const box = document.getElementById("selectedAirlinesText");
+
+  if (selectedAirlines.length === 0) {
+    box.textContent = "";
+  } else {
+    box.textContent = "Showing: " + selectedAirlines.join(", ");
+  }
+}
+
+function updatePieChart() {
+  updateSelectedAirlinesText();
+
+  if (pieChart) pieChart.destroy();
+
+  let labels, values;
+
+  if (selectedAirlines.length === 0) {
+    // Default: top 10
+    labels = top10List.map(e => e[0]);
+    values = top10List.map(e => e[1]);
+  } else {
+    labels = selectedAirlines;
+    values = labels.map(prefix => allCounts[prefix]);
+  }
+
+  const colors = labels.map(() => '#' + Math.floor(Math.random() * 16777215).toString(16));
+
+  const ctx = document.getElementById('airlinePieChart').getContext('2d');
+  pieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        label: "Airline Breakdown",
+        data: values,
+        backgroundColor: colors,
+        borderColor: '#fff',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: 'Airline Distribution' }
+      }
+    }
+  });
 }
 
 async function fetchAndRenderStats() {
@@ -139,51 +249,29 @@ async function fetchAndRenderStats() {
     const data = await response.json();
     if (!data) return;
 
-    // Update animated total counter
+    // Counter
     const totalPlanes = Object.keys(data).length;
     animateCounter(totalPlanes);
 
-    // Count airlines by callsign prefix
-    const counts = {};
+    // Airline counting
+    allCounts = {};
     Object.values(data).forEach(plane => {
       if (!plane.Callsign) return;
       const prefix = plane.Callsign.match(/^[A-Z]{2,3}/)?.[0] || "Other";
-      counts[prefix] = (counts[prefix] || 0) + 1;
+      allCounts[prefix] = (allCounts[prefix] || 0) + 1;
     });
 
-    // --- Pie chart data ---
-    const pieLabels = Object.keys(counts).sort();
-    const pieValues = pieLabels.map(l => counts[l]);
-    const pieColors = pieLabels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
-
-    const pieCtx = document.getElementById('airlinePieChart').getContext('2d');
-    new Chart(pieCtx, {
-      type: 'pie',
-      data: {
-        labels: pieLabels,
-        datasets: [{
-          label: 'Number of Planes',
-          data: pieValues,
-          backgroundColor: pieColors,
-          borderColor: '#fff',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' },
-          title: { display: true, text: 'Planes by Airline Prefix' }
-        }
-      }
-    });
-
-    // --- Bar chart data (top 10) ---
-    const sortedAirlines = Object.entries(counts)
-      .sort((a,b) => b[1] - a[1])
+    // Create top 10 list
+    top10List = Object.entries(allCounts)
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 10);
-    const barLabels = sortedAirlines.map(e => e[0]);
-    const barValues = sortedAirlines.map(e => e[1]);
+
+    // Default pie chart refresh
+    updatePieChart();
+
+    // BAR CHART (unchanged)
+    const barLabels = top10List.map(e => e[0]);
+    const barValues = top10List.map(e => e[1]);
     const barColors = barLabels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
 
     const barCtx = document.getElementById('airlineBarChart').getContext('2d');
@@ -217,5 +305,6 @@ async function fetchAndRenderStats() {
 fetchAndRenderStats();
 setInterval(fetchAndRenderStats, 30000);
 </script>
+
 </body>
 </html>
