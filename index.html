@@ -135,6 +135,74 @@
 <div id="grid"></div>
 
 <script>
+// ICAO Callsign Prefix → Airline Name
+const ICAO_AIRLINES = {
+  // UK + Europe
+  "EZY": "easyJet",
+  "EJU": "easyJet Europe",
+  "BAW": "British Airways",
+  "SHT": "BA Shuttle",
+  "RYR": "Ryanair",
+  "EIN": "Aer Lingus",
+  "TOM": "TUI Airways UK",
+  "TUI": "TUI Airlines Belgium",
+  "EXS": "Jet2",
+  "WUK": "Wizz Air UK",
+  "WZZ": "Wizz Air",
+  "KLM": "KLM",
+  "AFR": "Air France",
+  "DLH": "Lufthansa",
+  "SWR": "Swiss",
+  "BEL": "Brussels Airlines",
+  "TAP": "TAP Air Portugal",
+  "AZA": "ITA Airways",
+  "VLG": "Vueling",
+  "VOE": "Volotea",
+  "LOT": "LOT Polish Airlines",
+  "AUA": "Austrian Airlines",
+  "NAX": "Norwegian Air Shuttle",
+  "IBK": "Norwegian Air Intl.",
+  "SAS": "Scandinavian Airlines",
+  "VIR": "Virgin Atlantic",
+  "RCH": "US AIRFORCE",
+  "SVA": "Saudi Arabian Airlines",
+
+  // US
+  "AAL": "American Airlines",
+  "UAL": "United Airlines",
+  "DAL": "Delta Air Lines",
+  "SWA": "Southwest",
+  "JBU": "JetBlue",
+  "ASA": "Alaska Airlines",
+  "FFT": "Frontier Airlines",
+
+  // Cargo
+  "FDX": "FedEx",
+  "UPS": "UPS",
+  "BCS": "DHL",
+  "GTI": "Atlas Air",
+  "CLX": "Cargolux",
+
+  // Middle East
+  "UAE": "Emirates",
+  "ETD": "Etihad",
+  "QTR": "Qatar Airways",
+
+  // Asia
+  "JAL": "Japan Airlines",
+  "ANA": "All Nippon Airways",
+  "SIA": "Singapore Airlines",
+  "THA": "Thai Airways",
+  "CCA": "Air China",
+  "CES": "China Eastern",
+  "CSN": "China Southern",
+  "EVA": "EVA Air",
+
+  // Canada
+  "ACA": "Air Canada",
+  "WJA": "WestJet"
+};
+
 const FIREBASE_URL = "https://flightbank-31a09-default-rtdb.firebaseio.com/PlaneData.json";
 let allPlanes = [];
 let displayedCount = 0;
@@ -166,6 +234,9 @@ function renderNextBatch() {
   let rendered = 0;
   while (displayedCount < allPlanes.length && rendered < BATCH_SIZE) {
     const plane = allPlanes[displayedCount];
+    const prefix = plane.Callsign ? plane.Callsign.substring(0, 3).toUpperCase() : "";
+    const airline = ICAO_AIRLINES[prefix] || "Unknown Airline";
+
     displayedCount++;
 
     if (!plane.Callsign || (searchTerm && !plane.Callsign.toLowerCase().includes(searchTerm))) continue;
@@ -176,10 +247,13 @@ function renderNextBatch() {
     card.innerHTML = `
       <h2>${plane.Callsign}</h2>
       <p><strong>Hex:</strong> ${plane.Hex}</p>
+      <p><strong>Airline:</strong> ${airline}</p>
       <p><strong>First Updated:</strong> ${plane.FirstSeen}</p>
       <p><strong>Last Updated:</strong> ${plane.LastSeen}</p>
-      <a href="https://www.airnavradar.com/flight/${plane.Callsign}" target="_blank">View Flight</a>
-    `;
+      <a href="https://www.airnavradar.com/data/flights/${plane.Callsign}" target="_blank">View Flight</a>
+   
+      `;
+
     grid.appendChild(card);
     rendered++;
   }
@@ -207,3 +281,4 @@ setInterval(fetchPlanes, 30000); // refresh every 30 seconds
 
 </body>
 </html>
+
